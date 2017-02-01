@@ -53,10 +53,14 @@ simple_expr:
 | TRUE                               { Past.Boolean (get_loc(), true)}
 | FALSE                              { Past.Boolean (get_loc(), false)}
 | LPAREN expr RPAREN                 { $2 }
-| LPAREN expr COMMA expr RPAREN      { Past.Pair(get_loc(), $2, $4) }
+| LPAREN expr COMMA tuplebody RPAREN { Past.Pair(get_loc(), $2, $4) }
 | NOT simple_expr               { Past.UnaryOp(get_loc(), Past.NOT, $2) }
 | BANG simple_expr              { Past.Deref(get_loc(), $2) }
 | REF simple_expr               { Past.Ref(get_loc(), $2) }
+
+tuplebody:
+| expr                  { $1 }
+| expr COMMA tuplebody  { Past.Pair(get_loc(), $1, $3) }
 
 expr:
 | simple_expr                        {  $1 }
